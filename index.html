@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello world project</title>
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+
+    <style>
+      /* ACCOUNTTECH SOLUTIONS — Black & Gold (solo colores, sin agregar features) */
+      :root{
+        --ats-black: #0B0B0B;
+        --ats-black-2: #111111;
+        --ats-gold: #C7A24C;
+        --ats-gold-2: #E2C36A;
+        --ats-white: #FFFFFF;
+      }
+
+      /* Contenedor / ventana */
+      .n8n-chat .n8n-chat__window,
+      .n8n-chat .n8n-chat__container{
+        background: var(--ats-black) !important;
+        border: 1px solid rgba(199,162,76,.35) !important;
+      }
+
+      /* Header */
+      .n8n-chat .n8n-chat__header{
+        background: linear-gradient(180deg, var(--ats-black), var(--ats-black-2)) !important;
+        border-bottom: 1px solid rgba(199,162,76,.25) !important;
+      }
+      .n8n-chat .n8n-chat__header-title,
+      .n8n-chat .n8n-chat__header-subtitle{
+        color: var(--ats-white) !important;
+      }
+
+      /* Mensaje asistente */
+      .n8n-chat .n8n-chat__message--assistant{
+        background: rgba(255,255,255,.06) !important;
+        border: 1px solid rgba(199,162,76,.18) !important;
+        color: var(--ats-white) !important;
+      }
+
+      /* Mensaje usuario */
+      .n8n-chat .n8n-chat__message--user{
+        background: rgba(199,162,76,.18) !important;
+        border: 1px solid rgba(199,162,76,.35) !important;
+        color: var(--ats-white) !important;
+      }
+
+      /* Input (dejo texto negro como en tu identidad de formularios) */
+      .n8n-chat input,
+      .n8n-chat textarea,
+      .n8n-chat .n8n-chat__input{
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        border: 1px solid rgba(199,162,76,.35) !important;
+      }
+      .n8n-chat input::placeholder,
+      .n8n-chat textarea::placeholder{
+        color: rgba(0,0,0,.55) !important;
+      }
+
+      /* Botones (Enviar / Toggle) */
+      .n8n-chat button,
+      .n8n-chat .n8n-chat__toggle{
+        background: linear-gradient(135deg, var(--ats-gold), var(--ats-gold-2)) !important;
+        color: #000 !important;
+        border: none !important;
+      }
+
+      /* Links / acentos */
+      .n8n-chat a{
+        color: var(--ats-gold-2) !important;
+      }
+
+      /* Input container - Ensure input and send button are on same row */
+      .n8n-chat .n8n-chat__input-container,
+      .n8n-chat .n8n-chat__input-form{
+        display: flex !important;
+        gap: 8px !important;
+        align-items: flex-end !important;
+        flex-wrap: nowrap !important;
+      }
+
+      .n8n-chat .n8n-chat__input{
+        flex: 1 !important;
+        min-width: 0 !important;
+      }
+
+      .n8n-chat .n8n-chat__send-button,
+      .n8n-chat button[type="submit"]{
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="/client/main.tsx"></script>
+    <script type="module">
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+      // Comprehensive ResizeObserver error suppression
+      const originalError = console.error;
+      const originalWarn = console.warn;
+      const originalLog = console.log;
+
+      const isResizeObserverError = (args) => {
+        const message = String(args[0] || '').toLowerCase();
+        return message.includes('resizeobserver') ||
+               message.includes('loop completed') ||
+               message.includes('undelivered');
+      };
+
+      console.error = function(...args) {
+        if (!isResizeObserverError(args)) {
+          originalError.apply(console, args);
+        }
+      };
+
+      console.warn = function(...args) {
+        if (!isResizeObserverError(args)) {
+          originalWarn.apply(console, args);
+        }
+      };
+
+      console.log = function(...args) {
+        if (!isResizeObserverError(args)) {
+          originalLog.apply(console, args);
+        }
+      };
+
+      // Handle ResizeObserver errors at window level
+      window.addEventListener('error', (event) => {
+        if (event.message && (event.message.includes('ResizeObserver') || event.message.includes('undelivered'))) {
+          event.preventDefault();
+          return false;
+        }
+      }, true);
+
+      // Catch unhandled rejection errors related to ResizeObserver
+      window.addEventListener('unhandledrejection', (event) => {
+        if (event.reason && String(event.reason).includes('ResizeObserver')) {
+          event.preventDefault();
+        }
+      }, true);
+
+      createChat({
+        webhookUrl: 'https://n8n.srv1286386.hstgr.cloud/webhook/1370bb59-a48a-463d-80f7-3e11fc4afe24/chat',
+        webhookConfig: {
+          method: 'POST',
+          headers: {}
+        },
+        target: '#n8n-chat',
+        mode: 'window',
+        chatInputKey: 'chatInput',
+        chatSessionKey: 'sessionId',
+        loadPreviousSession: true,
+        metadata: {},
+        showWelcomeScreen: false,
+        defaultLanguage: 'en',
+        initialMessages: [
+          'Hola 👋 Soy el asistente de ACCOUNTTECH',
+          'Cuéntame tu caso y te orientamos.'
+        ],
+        i18n: {
+          en: {
+            title: 'ACCOUNTTECH',
+            subtitle: "Inicia una conversación. Estamos listos para ayudarte.",
+            footer: '',
+            getStarted: 'New Conversation',
+            inputPlaceholder: 'Type your question..',
+          },
+        },
+        enableStreaming: false,
+      });
+    </script>
+  </body>
+</html>
