@@ -1,8 +1,18 @@
 import Header from "@/components/Header";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Privacy() {
+  const navigate = useNavigate();
+
+  const goToHome = () => {
+    navigate("/");
+    // Wait for navigation then scroll to hero
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -10,13 +20,13 @@ export default function Privacy() {
       {/* Back Button & Title Section */}
       <section className="relative bg-gradient-to-b from-primary to-secondary py-12 lg:py-16">
         <div className="container-max relative z-10">
-          <Link
-            to="/"
+          <button
+            onClick={goToHome}
             className="inline-flex items-center gap-2 text-gold hover:text-gold-light transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver a inicio
-          </Link>
+          </button>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Aviso de Privacidad Integral
           </h1>
@@ -384,9 +394,12 @@ export default function Privacy() {
             </div>
 
             <div className="flex gap-6">
-              <Link to="/" className="hover:text-gold transition-colors">
+              <button
+                onClick={goToHome}
+                className="hover:text-gold transition-colors cursor-pointer"
+              >
                 Inicio
-              </Link>
+              </button>
               <a href="#" className="hover:text-gold transition-colors">
                 Términos de Uso
               </a>
