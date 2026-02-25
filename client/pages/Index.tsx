@@ -702,7 +702,7 @@ export default function Index() {
               <a href="https://www.linkedin.com/company/accounttech-solution" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
                 LinkedIn
               </a>
-              <a href="#" className="hover:text-gold transition-colors">
+              <a href="https://api.whatsapp.com/send/?phone=5213318200036&amp;text=Hola,%20me%20interesan%20sus%20servicios;%20vi%20su%20p%C3%A1gina%20web%20y%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n.&amp;type=phone_number&amp;app_absent=0?text=Hola%20ACCOUNTTECH%20SOLUTIONS%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20sus%20servicios" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
                 WhatsApp
               </a>
               <Link to="/privacy" className="hover:text-gold transition-colors">
