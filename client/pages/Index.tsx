@@ -45,8 +45,23 @@ export default function Index() {
     }));
   };
 
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validar email
+    if (!isValidEmail(formData.email)) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor ingresa un correo electrónico válido",
+      });
+      return;
+    }
+
     if (!formData.privacyAccepted) {
       setSubmitMessage({
         type: "error",

@@ -9,6 +9,11 @@ interface FormData {
   message: string;
 }
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 export const handleFormSubmission: RequestHandler = async (req, res) => {
   try {
     const formData: FormData = req.body;
@@ -18,6 +23,14 @@ export const handleFormSubmission: RequestHandler = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Campos requeridos faltantes",
+      });
+    }
+
+    // Validate email format
+    if (!isValidEmail(formData.email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Correo electrónico inválido",
       });
     }
 
