@@ -26,6 +26,12 @@ export default function Index() {
     privacyAccepted: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   const handleFormChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -39,24 +45,86 @@ export default function Index() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.privacyAccepted) {
-      alert("Por favor acepta el aviso de privacidad");
+
+    // Validar email
+    if (!isValidEmail(formData.email)) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor ingresa un correo electrónico válido",
+      });
       return;
     }
-    // Handle form submission
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({
-      name: "",
-      company: "",
-      phone: "",
-      email: "",
-      service: "",
-      message: "",
-      privacyAccepted: false,
-    });
+
+    if (!formData.privacyAccepted) {
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor acepta el aviso de privacidad",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setSubmitMessage(null);
+
+    try {
+      const response = await fetch("/api/form-submission", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          company: formData.company,
+          phone: formData.phone,
+          email: formData.email,
+          service: formData.service,
+          message: formData.message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitMessage({
+          type: "success",
+          text:
+            result.action === "updated"
+              ? "¡Información actualizada correctamente!"
+              : "¡Solicitud enviada correctamente! Nos pondremos en contacto pronto.",
+        });
+
+        // Reset form
+        setFormData({
+          name: "",
+          company: "",
+          phone: "",
+          email: "",
+          service: "",
+          message: "",
+          privacyAccepted: false,
+        });
+      } else {
+        setSubmitMessage({
+          type: "error",
+          text: "Error al enviar la solicitud. Por favor, intenta nuevamente.",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitMessage({
+        type: "error",
+        text: "Error de conexión. Por favor, verifica tu conexión e intenta nuevamente.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -632,11 +700,26 @@ export default function Index() {
               </label>
             </div>
 
+            {submitMessage && (
+              <div
+                className={`p-4 rounded-lg mb-6 text-sm font-semibold ${
+                  submitMessage.type === "success"
+                    ? "bg-green-50 border border-green-200 text-green-800"
+                    : "bg-red-50 border border-red-200 text-red-800"
+                }`}
+              >
+                {submitMessage.text}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="premium-button-secondary text-base w-full text-center py-4 font-semibold"
+              disabled={isLoading}
+              className={`premium-button-secondary text-base w-full text-center py-4 font-semibold transition-opacity ${
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              Enviar Solicitud
+              {isLoading ? "Enviando..." : "Enviar Solicitud"}
             </button>
           </form>
         </div>
@@ -702,15 +785,15 @@ export default function Index() {
               <a href="https://www.linkedin.com/company/accounttech-solution" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
                 LinkedIn
               </a>
-              <a href="#" className="hover:text-gold transition-colors">
+              <a href="https://api.whatsapp.com/send/?phone=5213318200036&amp;text=Hola,%20me%20interesan%20sus%20servicios;%20vi%20su%20p%C3%A1gina%20web%20y%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n.&amp;type=phone_number&amp;app_absent=0?text=Hola%20ACCOUNTTECH%20SOLUTIONS%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20sus%20servicios" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">
                 WhatsApp
               </a>
               <Link to="/privacy" className="hover:text-gold transition-colors">
                 Política de Privacidad
               </Link>
-              <a href="#" className="hover:text-gold transition-colors">
+              <Link to="/terms" className="hover:text-gold transition-colors">
                 Términos de Uso
-              </a>
+              </Link>
             </div>
           </div>
         </div>
