@@ -791,9 +791,9 @@ export default function Index() {
               <Link to="/privacy" className="hover:text-gold transition-colors">
                 Política de Privacidad
               </Link>
-              <a href="#" className="hover:text-gold transition-colors">
+              <Link to="/terms" className="hover:text-gold transition-colors">
                 Términos de Uso
-              </a>
+              </Link>
             </div>
           </div>
         </div>

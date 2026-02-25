@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Privacy() {
   const navigate = useNavigate();
@@ -400,9 +400,9 @@ export default function Privacy() {
               >
                 Inicio
               </button>
-              <a href="#" className="hover:text-gold transition-colors">
+              <Link to="/terms" className="hover:text-gold transition-colors">
                 Términos de Uso
-              </a>
+              </Link>
             </div>
           </div>
         </div>
