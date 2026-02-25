@@ -59,9 +59,8 @@ export default function Index() {
     setSubmitMessage(null);
 
     try {
-      // REEMPLAZA ESTO CON TU URL DE GOOGLE APPS SCRIPT
       const GOOGLE_APPS_SCRIPT_URL =
-        "https://script.google.com/macros/d/YOUR_DEPLOYMENT_ID/usercontent";
+        "https://script.google.com/macros/s/AKfycbxHqElJkXPa1vU1YGVQPxe7WVDRcZy0Y9_BHD1m7BfrbktLDg6KtI-_4jX31O4EVAl5AQ/exec";
 
       const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
         method: "POST",
