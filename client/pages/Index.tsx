@@ -26,6 +26,12 @@ export default function Index() {
     privacyAccepted: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   const handleFormChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -39,24 +45,75 @@ export default function Index() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.privacyAccepted) {
-      alert("Por favor acepta el aviso de privacidad");
+      setSubmitMessage({
+        type: "error",
+        text: "Por favor acepta el aviso de privacidad",
+      });
       return;
     }
-    // Handle form submission
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({
-      name: "",
-      company: "",
-      phone: "",
-      email: "",
-      service: "",
-      message: "",
-      privacyAccepted: false,
-    });
+
+    setIsLoading(true);
+    setSubmitMessage(null);
+
+    try {
+      // REEMPLAZA ESTO CON TU URL DE GOOGLE APPS SCRIPT
+      const GOOGLE_APPS_SCRIPT_URL =
+        "https://script.google.com/macros/d/YOUR_DEPLOYMENT_ID/usercontent";
+
+      const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          company: formData.company,
+          phone: formData.phone,
+          email: formData.email,
+          service: formData.service,
+          message: formData.message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitMessage({
+          type: "success",
+          text:
+            result.action === "updated"
+              ? "¡Información actualizada correctamente!"
+              : "¡Solicitud enviada correctamente! Nos pondremos en contacto pronto.",
+        });
+
+        // Reset form
+        setFormData({
+          name: "",
+          company: "",
+          phone: "",
+          email: "",
+          service: "",
+          message: "",
+          privacyAccepted: false,
+        });
+      } else {
+        setSubmitMessage({
+          type: "error",
+          text: "Error al enviar la solicitud. Por favor, intenta nuevamente.",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitMessage({
+        type: "error",
+        text: "Error de conexión. Por favor, verifica tu conexión e intenta nuevamente.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -632,11 +689,26 @@ export default function Index() {
               </label>
             </div>
 
+            {submitMessage && (
+              <div
+                className={`p-4 rounded-lg mb-6 text-sm font-semibold ${
+                  submitMessage.type === "success"
+                    ? "bg-green-50 border border-green-200 text-green-800"
+                    : "bg-red-50 border border-red-200 text-red-800"
+                }`}
+              >
+                {submitMessage.text}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="premium-button-secondary text-base w-full text-center py-4 font-semibold"
+              disabled={isLoading}
+              className={`premium-button-secondary text-base w-full text-center py-4 font-semibold transition-opacity ${
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              Enviar Solicitud
+              {isLoading ? "Enviando..." : "Enviar Solicitud"}
             </button>
           </form>
         </div>
