@@ -304,6 +304,9 @@ export default function Terms() {
               <Link to="/privacy" className="hover:text-gold transition-colors">
                 Política de Privacidad
               </Link>
+              <Link to="/data-deletion" className="hover:text-gold transition-colors">
+                Política de Eliminación de Datos
+              </Link>
             </div>
           </div>
         </div>
