@@ -8,11 +8,24 @@ export default function Header() {
   const location = useLocation();
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setMobileMenuOpen(false);
+    if (location.pathname !== "/") {
+      // If not on home page, navigate to home first
+      navigate("/");
+      // Wait for navigation then scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      // On home page, just scroll to section
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
+    setMobileMenuOpen(false);
   };
 
   const goToHome = () => {
